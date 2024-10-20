@@ -33,6 +33,7 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -76,6 +77,7 @@ public class HomeFragment extends Fragment {
 
     public void displayMotion(View v, Motion[] m){
         TableLayout mt = (TableLayout) v.findViewById(R.id.motionTable);
+        System.out.println("mt.. "+mt);
         mt.removeAllViews();
 
         for(Motion i : m){
@@ -102,6 +104,33 @@ public class HomeFragment extends Fragment {
             stamp.setText(formattedDate);
             tr.addView(stamp);
 
+
+
+
+            Button del = new Button(v.getContext());
+            del.setText("Delete");
+            del.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v2) {
+                    AlertApi api = SetupRetro.getRetro();
+                    Call<ResponseBody> call = api.deleteMotion(i.getCode());
+                    call.enqueue(new Callback<ResponseBody>() { @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                    }
+
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            t.printStackTrace();
+                        }
+
+                    });
+                    getAlerts(v);
+                }
+            });
+            tr.addView(del);
+
             mt.addView(tr);
         }
 
@@ -114,10 +143,12 @@ public class HomeFragment extends Fragment {
         LinearLayout l = new LinearLayout(v.getContext());
         p.setContentView(l);
 
+
         VideoView videoView = new VideoView(v.getContext());
         String link="http://192.168.122.69:8000/motion/"+code;
         MediaController mediaController = new MediaController(v.getContext());
         mediaController.setAnchorView(videoView);
+
         Uri video = Uri.parse(link);
         videoView.setMediaController(mediaController);
         videoView.setVideoURI(video);
@@ -125,7 +156,7 @@ public class HomeFragment extends Fragment {
 
 
         l.addView(videoView);
-        p.showAtLocation(v, Gravity.TOP,10,10);
+        p.showAtLocation(v, Gravity.TOP,10,100);
 
 
     }
