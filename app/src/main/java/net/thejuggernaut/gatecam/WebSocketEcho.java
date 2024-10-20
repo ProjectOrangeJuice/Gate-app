@@ -30,22 +30,26 @@ public final class WebSocketEcho extends WebSocketListener {
 
   @Override public void onOpen(WebSocket webSocket, Response response) {
     System.out.println("Connected");
-    webSocket.send("Hello");
   }
 
   @Override public void onMessage(WebSocket webSocket, final String text) {
-    act.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        //Handle UI here
-        ImageView i = (ImageView) act.findViewById(R.id.imageView);
-        byte[] decodedString = Base64.decode(text, Base64.DEFAULT);
-        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        i.setImageBitmap(decodedByte);
-      }
-    });
-
     System.out.println("MESSAGE: " + text);
+    if(text.equals("PING")){
+      webSocket.send("PONG");
+      System.out.println("PONG BACK");
+    }else {
+      act.runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          //Handle UI here
+          ImageView i = (ImageView) act.findViewById(R.id.imageView);
+          byte[] decodedString = Base64.decode(text, Base64.DEFAULT);
+          Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+          i.setImageBitmap(decodedByte);
+        }
+      });
+    }
+
   }
 
   @Override public void onClosing(WebSocket webSocket, int code, String reason) {

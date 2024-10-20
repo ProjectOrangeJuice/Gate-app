@@ -34,7 +34,7 @@ public class DashboardFragment extends Fragment {
                 .build();
         WebSocketEcho w = new WebSocketEcho(getActivity());
         Request request = new Request.Builder()
-                .url("ws://192.168.1.101:8000/stream/Hello")
+                .url("ws://192.168.122.69:8000/stream/Hello")
                 .build();
         client.newWebSocket(request, w);
 
